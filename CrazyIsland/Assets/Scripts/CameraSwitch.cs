@@ -6,6 +6,7 @@ public class CameraSwitch : MonoBehaviour
 {
     public GameObject thirdCam;
     public GameObject firstCam;
+    public GameObject firstCamSneaking;
     public int camMode;
 
     void Update()
@@ -16,6 +17,7 @@ public class CameraSwitch : MonoBehaviour
             else camMode = 1;
             StartCoroutine(camChange());
         }
+            StartCoroutine(sneakingFirstCamChange());
     }
 
     IEnumerator camChange()
@@ -28,7 +30,32 @@ public class CameraSwitch : MonoBehaviour
         } else
         {
             thirdCam.SetActive(false);
-            firstCam.SetActive(true);
+            if (Input.GetButton("Sneaking")) {
+                firstCam.SetActive(false);
+                firstCamSneaking.SetActive(true);
+            } else
+            {
+                firstCamSneaking.SetActive(false);
+                firstCam.SetActive(true);
+            }
+        }
+    }
+
+    IEnumerator sneakingFirstCamChange()
+    {
+        yield return new WaitForSeconds(0.01f);
+        if (camMode == 1)
+        {
+            if (Input.GetButton("Sneaking"))
+            {
+                firstCam.SetActive(false);
+                firstCamSneaking.SetActive(true);
+            }
+            else
+            {
+                firstCamSneaking.SetActive(false);
+                firstCam.SetActive(true);
+            }
         }
     }
 }
