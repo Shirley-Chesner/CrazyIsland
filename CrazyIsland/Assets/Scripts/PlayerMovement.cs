@@ -22,11 +22,12 @@ public class PlayerMovement : MonoBehaviour
     private Animator animator;
     private bool isJumping;
     private bool isGrounded;
-    public string isFighting;
 
     private float? jumpBtnPressedTime;
     private float? lastGroundedTime;
-    AnimatorStateInfo b;
+
+    private bool shouldAllowMovment;
+
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -35,15 +36,24 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        //Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
+        shouldAllowMovment = true;
     }
     void Update()
-    {
-        UpdateLook(); 
-        UpdateMovement();
-        UpdateGravity(); 
+    { 
+        if (shouldAllowMovment)
+        {
+            UpdateLook();
+            UpdateMovement();
+            UpdateGravity(); 
+        }
     }
+
+    public void changeAllowMovement(bool isMoveAllowed)
+    {
+        shouldAllowMovment = isMoveAllowed;
+    }
 
     void UpdateLook()
     {  

@@ -1,14 +1,72 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class playerInventory : MonoBehaviour
 {
     // In the future we will add variable for each item that the player can collect
-  public int numberOfItems { get; private set; }
+  //public int numberOfItems { get; private set; }
+    public GameObject inventory;
+    PlayerMovement moveScript;
+    public List<item> items = new List<item>();
+    public Transform itemContent;
+    public GameObject inventoryItem;
 
-    public void itemCollected()
+    private void Start()
     {
-        numberOfItems++;
+        inventory.SetActive(false);
+        moveScript = gameObject.GetComponent<PlayerMovement>();
     }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            inventory.SetActive(!inventory.activeSelf);
+            moveScript.changeAllowMovement(!inventory.activeSelf);
+
+            if (inventory.activeSelf)
+            {
+                listItems();
+            }
+        }
+         else if (!inventory.activeSelf)
+        {
+            moveScript.changeAllowMovement(true);
+        }
+    }
+
+
+    public void add(item item)
+    {
+        items.Add(item);
+    }
+
+    public void remove(item item)
+    {
+        items.Remove(item);
+    }
+
+    public void listItems()
+    {
+        // Clean inventory before each open
+        foreach (Transform item in itemContent)
+        {
+            Destroy(item.gameObject);
+        }
+
+        // Add items to inventory
+        foreach (var item in items)
+        {
+            GameObject obj = Instantiate(inventoryItem, itemContent);
+            var itemName = obj.transform.Find("itemName").GetComponent<TMP_Text>();
+            var itemIcon = obj.transform.Find("itemIcon").GetComponent<Image>();
+
+            itemName.text = item.itemName;
+            itemIcon.sprite = item.icon;
+        }
+    }
+
 }

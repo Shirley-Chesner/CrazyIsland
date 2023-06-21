@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class woodBoard : MonoBehaviour
+public class itemPickup : MonoBehaviour
 {
     private bool pickUpAllowed;
     playerInventory PlayerInventory = null;
+    public item item;
     private void Update()
     {
         if (pickUpAllowed && Input.GetKeyDown(KeyCode.E))
@@ -33,7 +34,7 @@ public class woodBoard : MonoBehaviour
 
     void pickUp()
     {
-        PlayerInventory.itemCollected();
+        PlayerInventory.add(item);
         Destroy(gameObject);
     }
 }
