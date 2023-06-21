@@ -26,7 +26,8 @@ public class PlayerMovement : MonoBehaviour
     private float? jumpBtnPressedTime;
     private float? lastGroundedTime;
 
-    private bool shouldAllowMovment;
+    public bool shouldAllowMovment;
+    public bool isFighting;
 
     private void Awake()
     {
@@ -42,7 +43,7 @@ public class PlayerMovement : MonoBehaviour
     }
     void Update()
     { 
-        if (shouldAllowMovment)
+        if (shouldAllowMovment && !isFighting)
         {
             UpdateLook();
             UpdateMovement();
@@ -54,6 +55,18 @@ public class PlayerMovement : MonoBehaviour
     {
         shouldAllowMovment = isMoveAllowed;
     }
+
+
+    public void notAllowMovement()
+    {
+        isFighting = true;
+    }
+
+    public void allowMovement()
+    {
+        isFighting = false;
+    }
+
 
     void UpdateLook()
     {  
