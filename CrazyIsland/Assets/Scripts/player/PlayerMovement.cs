@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField]
@@ -24,6 +26,10 @@ public class PlayerMovement : MonoBehaviour
     private float? jumpBtnPressedTime;
     private float? lastGroundedTime;
 
+    public bool shouldAllowMovment;
+    public bool isFighting;
+    public bool isSneaking;
+
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -32,15 +38,32 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        shouldAllowMovment = true;
     }
     void Update()
-    {
-        UpdateLook(); 
-        UpdateMovement();
-        UpdateGravity(); 
+    { 
+        if (shouldAllowMovment && !isFighting)
+        {
+            UpdateLook();
+            UpdateMovement();
+            UpdateGravity(); 
+        }
     }
+
+    public void changeAllowMovement(bool isMoveAllowed)
+    {
+        shouldAllowMovment = isMoveAllowed;
+    }
+
+    public void notAllowMovement()
+    {
+        isFighting = true;
+    }
+
+    public void allowMovement()
+    {
+        isFighting = false;
+    }
 
     void UpdateLook()
     {  
@@ -57,20 +80,34 @@ public class PlayerMovement : MonoBehaviour
         input += transform.forward * z;
         input += transform.right * x;
         input = Vector3.ClampMagnitude(input, 1f);
-            // the character is moving so change the state of the animation to running, sneaking or idle
-            if (input != Vector3.zero)
+
+        // the character is moving so change the state of the animation to running, sneaking or idle
+        if (Input.GetButtonDown("Fire1"))
         {
-            if (Input.GetButton("Sneaking")) {
-                animator.SetInteger("playerState", 2);
-            } else
-            {
-                animator.SetInteger("playerState", 1);
-            }
-          
-        }  else
-        {
-            animator.SetInteger("playerState", 0);
+            animator.SetInteger("playerState", 3);
         }
+        else
+        {
+           if (input != Vector3.zero)
+                {
+                    if (Input.GetKey(KeyCode.LeftControl)) {
+                        animator.SetInteger("playerState", 2);
+                         isSneaking = true;
+                        playerSpeed = 2;
+                    } else
+                    {
+                        animator.SetInteger("playerState", 1);
+                        isSneaking = false;
+                        playerSpeed = 5;
+                    }
+                }  else
+                {
+                    animator.SetInteger("playerState", 0);
+                    isSneaking = false;
+                    playerSpeed = 5;
+                }
+        }
+     
 
             //// Play step sounds
             //if (input != Vector3.zero)
@@ -92,6 +129,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Jump"))
         {
             jumpBtnPressedTime = Time.time;
+            animator.SetInteger("playerState", 0);
         }
 
         if (Time.time - lastGroundedTime <= jumpButtonGracePeriod)
@@ -133,10 +171,13 @@ public class PlayerMovement : MonoBehaviour
         }
        
     }
-    private void UpdateGravity()
+
+        private void UpdateGravity()
     {      
         var gravity = Physics.gravity * mass * Time.deltaTime;
         velocity.y = controller.isGrounded ? -1 : velocity.y + gravity.y;
     }
+
+
 }
 
