@@ -11,7 +11,7 @@ public class CameraSwitch : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetButtonDown("Camera"))
+        if (Input.GetKeyDown(KeyCode.C))
         {
             if (camMode == 1) camMode = 0;
             else camMode = 1;

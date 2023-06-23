@@ -6,13 +6,19 @@ using UnityEngine.UI;
 
 public class playerInventory : MonoBehaviour
 {
-    // In the future we will add variable for each item that the player can collect
-  //public int numberOfItems { get; private set; }
+    public static playerInventory instance;
     public GameObject inventory;
     PlayerMovement moveScript;
     public List<item> items = new List<item>();
     public Transform itemContent;
     public GameObject inventoryItem;
+
+    public ItemController[] ItemsController;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     private void Start()
     {
@@ -49,6 +55,12 @@ public class playerInventory : MonoBehaviour
         items.Remove(item);
     }
 
+    public void usePotion(int heal)
+    {
+        PlayerHealth health = gameObject.GetComponent<PlayerHealth>();
+        health.heal(heal);
+    }
+
     public void listItems()
     {
         // Clean inventory before each open
@@ -66,6 +78,18 @@ public class playerInventory : MonoBehaviour
 
             itemName.text = item.itemName;
             itemIcon.sprite = item.icon;
+        }
+
+        setInvItems();
+    }
+
+
+    public void setInvItems()
+    {
+        ItemsController = itemContent.GetComponentsInChildren<ItemController>();
+        for (int i =0; i < items.Count; i++)
+        {
+            ItemsController[i].addItem(items[i]);
         }
     }
 

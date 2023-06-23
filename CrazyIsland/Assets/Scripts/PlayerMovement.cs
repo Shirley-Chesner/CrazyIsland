@@ -28,6 +28,7 @@ public class PlayerMovement : MonoBehaviour
 
     public bool shouldAllowMovment;
     public bool isFighting;
+    public bool isSneaking;
 
     private void Awake()
     {
@@ -37,8 +38,6 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
-        //Cursor.lockState = CursorLockMode.Locked;
-        //Cursor.visible = false;
         shouldAllowMovment = true;
     }
     void Update()
@@ -56,7 +55,6 @@ public class PlayerMovement : MonoBehaviour
         shouldAllowMovment = isMoveAllowed;
     }
 
-
     public void notAllowMovement()
     {
         isFighting = true;
@@ -66,7 +64,6 @@ public class PlayerMovement : MonoBehaviour
     {
         isFighting = false;
     }
-
 
     void UpdateLook()
     {  
@@ -83,29 +80,30 @@ public class PlayerMovement : MonoBehaviour
         input += transform.forward * z;
         input += transform.right * x;
         input = Vector3.ClampMagnitude(input, 1f);
+
         // the character is moving so change the state of the animation to running, sneaking or idle
         if (Input.GetButtonDown("Fire1"))
         {
             animator.SetInteger("playerState", 3);
-            StartCoroutine(waitForFighting());
-
         }
         else
         {
            if (input != Vector3.zero)
                 {
-                    if (Input.GetButton("Sneaking")) {
+                    if (Input.GetKey(KeyCode.LeftControl)) {
                         animator.SetInteger("playerState", 2);
+                         isSneaking = true;
                         playerSpeed = 2;
                     } else
                     {
                         animator.SetInteger("playerState", 1);
+                        isSneaking = false;
                         playerSpeed = 5;
                     }
-          
                 }  else
                 {
                     animator.SetInteger("playerState", 0);
+                    isSneaking = false;
                     playerSpeed = 5;
                 }
         }
@@ -172,11 +170,6 @@ public class PlayerMovement : MonoBehaviour
             controller.Move((input * jumpHorizontalSpeed + velocity) * Time.deltaTime);
         }
        
-    }
-
-    IEnumerator waitForFighting()
-    {
-        yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length + animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
     }
 
         private void UpdateGravity()

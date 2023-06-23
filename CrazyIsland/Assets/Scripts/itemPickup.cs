@@ -5,8 +5,7 @@ using UnityEngine;
 public class itemPickup : MonoBehaviour
 {
     private bool pickUpAllowed;
-    playerInventory PlayerInventory = null;
-    public item item;
+    public item currentItem;
     private void Update()
     {
         if (pickUpAllowed && Input.GetKeyDown(KeyCode.E))
@@ -16,25 +15,28 @@ public class itemPickup : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        PlayerInventory = other.GetComponent<playerInventory>();
-        if (PlayerInventory != null)
-        {
             pickUpAllowed = true;
-        }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        PlayerInventory = other.GetComponent<playerInventory>();
-        if (PlayerInventory != null)
-        {
             pickUpAllowed = false;
-        }
     }
+
+
+    //public void startPickUpAnimation()
+    //{
+
+    //}
+
+    //public void stopPickUpAnimation()
+    //{
+
+    //}
 
     void pickUp()
     {
-        PlayerInventory.add(item);
+        playerInventory.instance.add(currentItem);
         Destroy(gameObject);
     }
 }
